@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/lord22shark/utils#readme",
   "dependencies": {
-    "jwt": "^0.2.0",
+    "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "moment": "^2.29.3",
     "moment-timezone": "^0.5.34",

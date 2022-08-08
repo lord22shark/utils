@@ -1,0 +1,37 @@
+{
+  "name": "utils",
+  "version": "1.0.0",
+  "description": "A package assembling all fragments of Javascript code that I wrote that are usefull alongside many projects like Errors, Tokens, Prototypes and so on",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lord22shark/utils.git"
+  },
+  "keywords": [
+    "utils",
+    "javascript",
+    "errors",
+    "exceptions",
+    "tokens"
+  ],
+  "author": "Jaime Daniel Corrêa Mendes",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lord22shark/utils/issues"
+  },
+  "homepage": "https://github.com/lord22shark/utils#readme",
+  "dependencies": {
+    "jwt": "^0.2.0",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.3",
+    "moment-timezone": "^0.5.34",
+    "remove-accents": "^0.4.2",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "jest": "^28.1.1"
+  }
+}

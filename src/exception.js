@@ -74,52 +74,21 @@ class Exception extends Error {
 
 		return stacks.map((s) => {
 
-			const basename = path.basename(module.parent.filename);
-			
-			const dirname = path.dirname(module.parent.filename);
+			let filename = module.parent.main ? path.basename(module.parent.main.filename) : path.basename(module.parent.filename);
 
-			const line = s.split('\n').slice(1).find((x) => {
+			const parser = new RegExp(`(.*)\\((.*):(\\d+):(\\d+)\\)`);
 
-				return x.indexOf(module.parent.filename) !== -1;
+			const line = s.split('\n')[1];
 
-			});
+			const matches = line.match(parser);
 
-			if (!line) {
-
-				return {
-					path: dirname,
-					file: basename,
-					line: 0,
-					column: 0
-				};
-
-			} else {
-
-				const parser = new RegExp(`(.*)\\(${module.parent.filename}:(\\d+):(\\d+)\\)`);
-
-				const matches = line.trim().match(parser);
-
-				if (matches) {
-
-					return {
-						path: dirname,
-						file: basename,
-						line: parseInt(matches[2]),
-						column: parseInt(matches[3])
-					};
-
-				} else {
-
-					return {
-						path: dirname,
-						file: basename,
-						line: 0,
-						column: 0
-					};
-
-				}
-
-			}
+			return {
+				main: filename,
+				path: path.dirname(matches[2]),
+				file: path.basename(matches[2]),
+				line: matches[3],
+				column: matches[4]
+			};
 
 		});		
 

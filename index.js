@@ -1,6 +1,7 @@
 /**
  * Importing Packages
  */
+const Connection = require('./src/connection.js');
 const Currency = require('./src/currency.js');
 const Exception = require('./src/exception.js');
 //const I18N = require('./src/i18n.js');
@@ -10,6 +11,7 @@ const Time = require('./src/time.js');
 const Tools = require('./src/tools.js');
 
 module.exports = {
+	Connection,
 	Currency,
 	Exception,
 	//I18N,

@@ -99,7 +99,7 @@ describe('Check all kinds of Connection', () => {
 
 		try {
 
-			const output = await mongo.engine.connection.db.collection('anti').find({}).toArray();
+			const output = await mongo.engine.connection.db.collection('projeto').find({}).toArray();
 
 			await mongo.client.disconnect();
 
@@ -155,6 +155,34 @@ describe('Check all kinds of Connection', () => {
 			expect(error).toBeDefined();
 
 		}
+
+	});
+
+	/**
+	 * 
+	 */
+	test('Connection to PostgresSQL localhost', async () => {
+
+		try {
+	
+			// ?sslmode=no-verify
+
+			const postgres = await new Connection('postgres://postgres:postgres@localhost:5432/bd');
+
+			const o = await postgres.client.query('SELECT * FROM usuario LIMIT 10');
+
+			await postgres.client.release();
+			
+			await postgres.client.end();
+
+			expect(o).toBeDefined();
+
+		} catch (error) {
+
+			expect(error).toBeDefined();
+
+		}
+		
 
 	});
 	

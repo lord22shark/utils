@@ -25,12 +25,15 @@
   "homepage": "https://github.com/lord22shark/utils#readme",
   "dependencies": {
     "@google-cloud/bigquery": "^6.0.3",
-    "jsonwebtoken": "^8.5.1",
+    "axios": "^1.1.2",
+    "fast-jwt": "^2.0.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.3",
     "moment-timezone": "^0.5.34",
     "mongoose": "^6.6.5",
     "parse-url": "^8.1.0",
+    "pg": "^8.8.0",
+    "qs": "^6.11.0",
     "redis": "^4.3.1",
     "remove-accents": "^0.4.2",
     "uuid": "^8.3.2"

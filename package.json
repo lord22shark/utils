@@ -1,6 +1,6 @@
 {
   "name": "utils",
-  "version": "1.0.0",
+  "version": "1.3.0",
   "description": "A package assembling all fragments of Javascript code that I wrote that are usefull alongside many projects like Errors, Tokens, Prototypes and so on",
   "main": "index.js",
   "scripts": {

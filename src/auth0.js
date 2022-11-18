@@ -136,7 +136,7 @@ class Auth0 {
 
 				accessTokenRequest.data.redirect_uri = this.Settings.AUTH0_REDIRECT_URI;
 
-				accessTokenRequest.data = qs.querystring(accessTokenRequest.data);
+				accessTokenRequest.data = qs.stringify(accessTokenRequest.data);
 
 			break;
 

@@ -92,7 +92,7 @@ class Auth0 {
 	 */
 	getAuthenticationUrl () {
 
-		return encodeURI(`https://${this.Settings.AUTH0_DOMAIN}/authorize?response_type=${this.Settings.AUTH0_RESPONSE_TYPE}&client_id=${this.Settings.AUTH0_CLIENT_ID}&connection=${this.Settings.AUTH0_CONNECTION}&redirect_uri=${this.Settings.AUTH0_REDIRECT_URI}&state=${this.Settings.AUTH0_STATE}&scope=openid profile email user_metadata app_metadata`);
+		return `https://${this.Settings.AUTH0_DOMAIN}/authorize?response_type=${this.Settings.AUTH0_RESPONSE_TYPE}&client_id=${this.Settings.AUTH0_CLIENT_ID}&connection=${this.Settings.AUTH0_CONNECTION}&redirect_uri=${this.Settings.AUTH0_REDIRECT_URI}&state=${this.Settings.AUTH0_STATE}&scope=openid profile email user_metadata app_metadata`;
 
 	}
 

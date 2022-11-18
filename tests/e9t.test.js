@@ -1,7 +1,7 @@
 /**
- * I18N Tests
+ * E9T Tests
  */ 
-const I18N = require('../src/i18n.js');
+const E9T = require('../src/e9t.js');
 
 
 /**
@@ -43,16 +43,16 @@ afterEach(() => {
 /**
  * Global :: Test
  */ 
-test('Currency is imported', () => {
+test('E9T is imported', () => {
 
-	expect(Currency).toBeDefined();
+	expect(E9T).toBeDefined();
 
 });
 
 /**
  * Scenario :: Grouping Tests
  */ 
-describe('Check 3 kinds of Currency: Intl, Static and Fallback', () => {
+describe('Check E9T', () => {
 
 	/**
 	 * Local :: beforeAll
@@ -86,8 +86,6 @@ describe('Check 3 kinds of Currency: Intl, Static and Fallback', () => {
 	 */ 
 	afterEach(() => {
 
-		delete Currency[Currency.numberFormat];
-
 		//console.log('[EXCEPTION]', 'LOCAL', 'Nothing to do afterEach');
 
 	});
@@ -95,36 +93,13 @@ describe('Check 3 kinds of Currency: Intl, Static and Fallback', () => {
 	/**
 	 * 
 	 */
-	test('Currency with default', () => {
+	test('E9T is working', () => {
 
-		const x = new Currency();
+		const x = new E9T('E9T', '/path/to/.env');
 
-		expect(x.format(1)).toBe('R$1,00');
+		expect(x).toBeDefined();
+		expect(x.E9T_DEFAULT).toBe('E9T');
 
 	});
-
-	/**
-	 * 
-	 */
-	test('Currency with static', () => {
-
-		Intl = null;
-
-		const x = new Currency();
-
-		expect(x.format(1)).toBe('R$1,00');
-
-	}); 
-
-	/**
-	 * 
-	 */
-	test('Currency with fallback', () => {
-
-		const x = new Currency('fr-FR', 'EUR');
-
-		expect(x.format(1)).toBe('$1.00');
-
-	}); 
 	
 });  

@@ -56,15 +56,16 @@ class Auth0 {
 
 			this.Settings = Auth0.Settings.reduce((previous, current) => {
 
-				if (_.isNil(input[current]) || typeof(input[current] !== 'string') || input[current] === '') {
-
-					fails.push(current);
-
-				} else {
+				if (!_.isNil(input[current]) && (typeof(input[current] === 'string')) && (input[current] !== '')) {
+				//if ((_.isNil(input[current])) || (typeof(input[current] !== 'string')) || (input[current] === '')) {
 
 					const key = `AUTH0_${current.toUpperCase()}`;
 
 					previous[key] = input[current];
+
+				} else {
+
+					fails.push(current);
 
 				}
 

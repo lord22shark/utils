@@ -198,7 +198,7 @@ class Auth0 {
 
 		}
 
-		const _token = await getAccessToken();
+		const _token = await this.getAccessToken();
 
 		const tokenInfoRequest = {
 			method: 'POST',
@@ -245,7 +245,7 @@ class Auth0 {
 
 		}
 
-		const _token = await getAccessToken();
+		const _token = await this.getAccessToken();
 
 		const profileRequest = {
 			method: 'GET',
@@ -307,7 +307,7 @@ class Auth0 {
 
 		}
 
-		const _token = await getAccessToken();
+		const _token = await this.getAccessToken();
 
 		const addUserRequest = {
 			method: 'POST',
@@ -363,7 +363,7 @@ class Auth0 {
 
 		}
 
-		const _token = await getAccessToken();
+		const _token = await this.getAccessToken();
 
 		const blockUserRequest = {
 			method: 'PATCH',
@@ -404,7 +404,7 @@ class Auth0 {
 
 		}
 
-		const _token = await getAccessToken();
+		const _token = await this.getAccessToken();
 
 		const unblockUserRequest = {
 			method: 'PATCH',
@@ -451,7 +451,7 @@ class Auth0 {
 
 		}
 
-		const _token = await getAccessToken();
+		const _token = await this.getAccessToken();
 
 		const setPasswordRequest = {
 			method: 'PATCH',
@@ -499,7 +499,7 @@ class Auth0 {
 
 		}
 
-		const _token = await getAccessToken();
+		const _token = await this.getAccessToken();
 
 		const updateMetadataRequest = {
 			method: 'PATCH',
@@ -534,7 +534,7 @@ class Auth0 {
 	 */
 	async fetchUsers (query) {
 
-		const _token = await getAccessToken();
+		const _token = await this.getAccessToken();
 
 		let output = [];
 
@@ -587,7 +587,7 @@ class Auth0 {
 	 */
 	async fetchLogs () {
 
-		const _token = await getAccessToken();
+		const _token = await this.getAccessToken();
 
 		let output = [];
 

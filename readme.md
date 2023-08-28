@@ -6,6 +6,7 @@ Yet working:
 
 * currency.js
 * exception.js
+* logger.js
 * sorting.js
 * time.js
 * tools.js

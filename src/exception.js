@@ -5,6 +5,11 @@ const path = require('path');
 const {v4:uuidv4} = require('uuid');
 
 /**
+ * Internal Dependencies
+ */
+const Time = require('./time.js'); 
+
+/**
  * Error Severities
  */ 
 const FEL = {
@@ -53,7 +58,7 @@ class Exception extends Error {
 
 		this.data = data;
 
-		this.date = new Date().toISOString();
+		this.date = Time.now(true);
 
 		return this;
 
@@ -106,7 +111,7 @@ class Exception extends Error {
 			status: this.status,
 			message: this.message,
 			data: this.data,
-			version: '1.0.0',
+			date: this.date,
 			files: this._getSource()
 		};
 

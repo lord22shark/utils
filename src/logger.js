@@ -284,6 +284,31 @@ class Log {
 	}
 
 	/**
+	 * Set a point, localization
+	 */ 
+	geo (longitude, latitude) {
+
+		this.coordinates = {
+			latitude: latitude || 0.0,
+			longitude: longitude || 0.0
+		};
+
+		return this;
+
+	}
+
+	/**
+	 * Set a point, localization
+	 */ 
+	geo (ip) {
+
+		this.ip = ip || null;
+
+		return this;
+
+	}
+
+	/**
 	 * Return a resumed plain structured of the log
 	 */ 
 	toPlain() {
@@ -318,7 +343,9 @@ class Log {
 			database: this.database || null,
 			model: this.model || null,
 			reference: this.reference || null,
-			payload: this.payload || null
+			payload: this.payload || null,
+			coordinates: this.coordinates || null,
+			ip: this.ip || null
 		};
 
 	}

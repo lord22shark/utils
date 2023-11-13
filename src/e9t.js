@@ -9,14 +9,14 @@ const fs = require('fs');
 const Exception = require('./exception.js'); 
 
 /**
- * 
+ * TODO: REMOVE PREFIX from output; handle 2 scanarios to dotenv
  */ 
 class E9T {
 
 	/**
 	 * 
 	 */ 
-	constructor (prefix, dotenvPath) {
+	constructor (prefix, dotenvPath, includePrefix) {
 
 		if ((prefix) && (typeof(prefix) === 'string') && (prefix.length === 3)) {
 
@@ -46,7 +46,7 @@ class E9T {
 
 				if (matches) {
 
-					const key = `${matches[1]}_${matches[3]}`;
+					const key = (includePrefix === true) ? `${matches[1]}_${matches[3]}` : matches[3];
 
 					const value = process.env[matches[0]].trim();
 

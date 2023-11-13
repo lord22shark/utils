@@ -24,6 +24,12 @@ const FEL = {
 };
 
 /**
+ * Parsers
+ */ 
+const parserA = /at(\s+)?(.*)(\s+)?\(((.*)\:(\d+)\:(\d+))\)/;
+const parserB = /at(\s+)?((.*)\:(\d+)\:(\d+))/;
+
+/**
  * 
  */ 
 class Exception extends Error {
@@ -81,18 +87,36 @@ class Exception extends Error {
 
 			let filename = module.parent.main ? path.basename(module.parent.main.filename) : path.basename(module.parent.filename);
 
-			const parser = new RegExp(`(.*)\\((.*):(\\d+):(\\d+)\\)`);
-
 			const line = s.split('\n')[1];
 
-			const matches = line.match(parser);
+			let matches = line.match(parserA);
+
+			if (!matches) {
+
+				matches = line.match(parserB);
+
+				if (!matches) {
+
+					return {
+						main: filename,
+						path: null,
+						file: null,
+						line: null,
+						column: null
+					};
+
+				}
+
+			}
+
+			const fullpath = matches[matches.length - 3];
 
 			return {
 				main: filename,
-				path: path.dirname(matches[2]),
-				file: path.basename(matches[2]),
-				line: matches[3],
-				column: matches[4]
+				path: path.dirname(fullpath),
+				file: path.basename(fullpath),
+				line: matches[matches.length - 2],
+				column: matches[matches.length - 1]
 			};
 
 		});		

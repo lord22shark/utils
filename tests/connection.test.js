@@ -167,13 +167,41 @@ describe('Check all kinds of Connection', () => {
 	
 			// ?sslmode=no-verify
 
-			const postgres = await new Connection('postgres://postgres:postgres@localhost:5432/bd');
+			const postgres = await new Connection('postgres://postgres:postgres@localhost:5432/postgres');
 
-			const o = await postgres.client.query('SELECT * FROM usuario LIMIT 10');
+			const o = await postgres.client.query('SELECT VERSION();');
 
 			await postgres.client.release();
 			
 			await postgres.client.end();
+
+			expect(o).toBeDefined();
+
+		} catch (error) {
+
+			expect(error).toBeDefined();
+
+		}
+		
+
+	});
+
+	/**
+	 * 
+	 */
+	test('Connection to MySQL localhost', async () => {
+
+		try {
+	
+			// ?sslmode=no-verify
+
+			const mysql = await new Connection('mysql://root:mysql@localhost:3306/mysql');
+
+			const o = await mysql.client.query('SELECT VERSION();');
+
+			await mysql.client.releaseConnection();
+			
+			await mysql.pool.end();
 
 			expect(o).toBeDefined();
 

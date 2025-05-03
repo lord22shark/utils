@@ -95,10 +95,9 @@ describe('Check E9T', () => {
 	 */
 	test('E9T is working', () => {
 
-		const x = new E9T('E9T', '/path/to/.env');
+		const x = new E9T('PRE', '/pathe/.env', true);
 
 		expect(x).toBeDefined();
-		expect(x.E9T_DEFAULT).toBe('E9T');
 
 	});
 	

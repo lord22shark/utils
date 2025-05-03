@@ -38,7 +38,7 @@ class E9T {
 
 			}
 
-			const defaultNaming = new RegExp(`^(${prefix})_(STR|INT|OBJ|FLO|PEM)_([A-Z_0-9]+)$`);
+			const defaultNaming = new RegExp(`^(${prefix})_(STR|INT|OBJ|FLO|PEM)_([a-zA-Z_0-9\-\.\+]+)$`);
 
 			Object.keys(process.env).reduce((previous, current) => {
 
@@ -81,6 +81,10 @@ class E9T {
 						break;
 
 					}
+
+				} else {
+
+					previous[current] = process.env[current];
 
 				}
 

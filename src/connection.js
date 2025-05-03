@@ -2,12 +2,11 @@
  * External Dependencies
  */  
 const {BigQuery} = require('@google-cloud/bigquery');
-const fs = require('fs');
 const Mongoose = require('mongoose');
 const Redis = require('redis');
 const ParseUrl = require('parse-url');
-const Path = require('path');
 const pg = require('pg');
+const mysql = require('mysql2');
 
 /**
  * Internal Dependencies
@@ -22,7 +21,7 @@ class Connection {
 	/**
 	 * 
 	 */
-	constructor (uri) {
+	constructor (uri, settings) {
 
 		let error = null;
 
@@ -33,6 +32,16 @@ class Connection {
 			return Promise.reject(error);
 
 		} else {
+
+			if ((settings) && !(settings instanceof Object)) {
+
+				error = new Exception('BLOCK', 400, 'Settings merge parameter should be an object', null, null);
+
+				return Promise.reject(error);
+
+			}
+
+			this.settings = settings || null;
 
 			this.attributes = null;
 
@@ -55,21 +64,26 @@ class Connection {
 				case 'mongodb+srv':
 				case 'mongodb':
 
-					return this.createMongoDBConnection(this.attributes);
+					return this.createMongoDBConnection(this.attributes, this.settings);
 
 				case 'redis':
 
-					return this.createRedisConnection(this.attributes);
+					return this.createRedisConnection(this.attributes, this.settings);
 
 				case 'bigquery':
 
-					return this.createBigQueryConnection(this.attributes);
+					return this.createBigQueryConnection(this.attributes, this.settings);
 
 				case 'postgres':
 				case 'postgresql':
 				case 'redshift':
 
-					return this.createPostgreSQLConnection(this.attributes);
+					return this.createPostgreSQLConnection(this.attributes, this.settings);
+
+				case 'mysql':
+				case 'mariadb':
+
+					return this.createMySQLConnection(this.attributes, this.settings);
 
 				default:
 
@@ -84,32 +98,25 @@ class Connection {
 	}
 
 	/**
-	 * mongodb://localhost:27017/tworkh
+	 * mongodb://localhost:27017/database
 	 */ 
-	createMongoDBConnection (parsedURI) {
+	createMongoDBConnection (parsedURI, settings) {
 
 		return new Promise(async (resolve, reject) => {
 
-			Mongoose.connect(parsedURI.href, {
-				useNewUrlParser: true,
-				useUnifiedTopology: true
-			}, (mongodbError, client) => {
+			Mongoose.connect(parsedURI.href, settings).then(() => {
 
-				if (mongodbError) {
+				resolve({
+					'pool': null,
+					'client': null,
+					'engine': Mongoose
+				});
 
-					const error = new Exception('BLOCK', 500, 'Fail to connect to MongoDB through Mongoose', mongodbError, {href: parsedURI.href});
+			}).catch((mongooseError) => {
 
-					reject(error);
+				const error = new Exception('BLOCK', 500, 'Fail to connect to MongoDB through Mongoose', mongooseError, {href: parsedURI.href});
 
-				} else {
-
-					resolve({
-						'pool': null,
-						'client': client,
-						'engine': Mongoose
-					});
-
-				}
+				reject(error);
 
 			});
 
@@ -120,17 +127,28 @@ class Connection {
 	/**
 	 * redis://localhost:6379/5
 	 */ 
-	createRedisConnection (parsedURI) {
+	createRedisConnection (parsedURI, settings) {
 
 		return new Promise(async (resolve, reject) => {
 
 			const connectionParameters = {
-				url: parsedURI.href
+				url: parsedURI.href,
+				pingInterval: 60000,
+				socket: {
+					tls: (parsedURI.href.match(/rediss:/) != null),
+					rejectUnauthorized: false
+				}
 			};
 
 			if ((parsedURI.query.legacyMode) && (parsedURI.query.legacyMode === 'true')) {
 
 				connectionParameters.legacyMode = true;
+
+			}
+
+			if (settings) {
+
+				Object.assign(connectionParameters, settings);
 
 			}
 
@@ -167,9 +185,9 @@ class Connection {
 	}
 	
 	/**
-	 * bigquery:///Users/lordshark/Downloads/tab-foundation-9ef1441ad213.json?project_id=23483243
+	 * bigquery:///path/9ef1441ad213.json?project_id=23483243
 	 */ 
-	createBigQueryConnection (parsedURI) {
+	createBigQueryConnection (parsedURI, settings) {
 
 		return new Promise(async (resolve, reject) => {
 
@@ -183,10 +201,18 @@ class Connection {
 
 				try {
 
-					const client = new BigQuery({
+					const connectionParameters = {
 						keyFilename: parsedURI.pathname,
 						projectId: parsedURI.query.project
-					});
+					};
+
+					if (settings) {
+
+						Object.assign(connectionParameters, settings);
+
+					}
+
+					const client = new BigQuery(connectionParameters);
 
 					resolve({
 						'pool': null,
@@ -211,7 +237,7 @@ class Connection {
 	/**
 	 * postgres://postgres:postgres@localhost:5432/arteimpressa
 	 */ 
-	createPostgreSQLConnection (parsedURI) {
+	createPostgreSQLConnection (parsedURI, settings) {
 
 		return new Promise(async (resolve, reject) => {
 
@@ -223,22 +249,28 @@ class Connection {
 
 			try {
 
-				process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
+				//process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
 
-				const settings = {
+				const connectionParameters = {
 					connectionString: parsedURI.href,
 					ssl: false
 				};
 
 				if ((parsedURI.query) && (parsedURI.query.sslmode)) {
 
-					settings.ssl = {
+					connectionParameters.ssl = {
 						rejectUnauthorized: false
 					};
 
 				}
 
-				connectionPool = new pg.Pool(settings);
+				if (settings) {
+
+					Object.assign(connectionParameters, settings);
+
+				}
+
+				connectionPool = new pg.Pool(connectionParameters);
 
 			} catch (postgresPoolError) {
 
@@ -257,7 +289,7 @@ class Connection {
 				resolve({
 					'pool': connectionPool,
 					'client': client,
-					'engine': Mongoose
+					'engine': pg
 				});
 
 			} catch (postgresConnectionError) {
@@ -271,6 +303,79 @@ class Connection {
 				return;
 
 			}
+
+		});
+	
+	}
+
+	/**
+	 * mysql://root:mysql@localhost:3306/mysql
+	 */ 
+	createMySQLConnection (parsedURI, settings) {
+
+		return new Promise(async (resolve, reject) => {
+
+			let connectionPool = null;
+
+			let error = null;
+
+			try {
+
+				const connectionParameters = {
+					host: parsedURI.hostname,
+					port: parsedURI.port || 3306,
+					user: parsedURI.username,
+					password: parsedURI.password,
+					database: parsedURI.pathname ? parsedURI.pathname.replace(/^\//, '') : null
+				};
+
+				if ((parsedURI.query) && (parsedURI.query.sslmode)) {
+
+					connectionParameters.ssl = {
+						rejectUnauthorized: false
+					};
+
+				}
+
+				if (settings) {
+
+					Object.assign(connectionParameters, settings);
+
+				}
+
+				connectionPool = await mysql.createPool(connectionParameters);
+
+			} catch (mysqlPoolError) {
+
+				error = new Exception('BLOCK', 500, 'Fail to create MySQL Pool', mysqlPoolError, {href: parsedURI.href});
+
+				reject(error);
+
+				return;
+
+			}
+
+			connectionPool.getConnection((mysqlConnectionError, connection) => {
+
+				if (mysqlConnectionError) {
+
+					error = new Exception('BLOCK', 500, 'Fail to connect to MySQL through mysql.createPool connection', mysqlConnectionError, {href: parsedURI.href});
+
+					reject(error);
+
+				} else {
+
+					resolve({
+						'pool': connectionPool,
+						'client': connection,
+						'engine': mysql
+					});
+
+				}
+
+				return;
+
+			});
 
 		});
 	

@@ -52,7 +52,7 @@ test('Sorting is imported', () => {
 /**
  * Scenario :: Grouping Tests
  */ 
-describe('Check 3 kinds of Sorting: Intl, Static and Fallback', () => {
+describe('Check Sorting', () => {
 
 	/**
 	 * Local :: beforeAll
@@ -86,8 +86,6 @@ describe('Check 3 kinds of Sorting: Intl, Static and Fallback', () => {
 	 */ 
 	afterEach(() => {
 
-		delete Sorting[Sorting.numberFormat];
-
 		//console.log('[EXCEPTION]', 'LOCAL', 'Nothing to do afterEach');
 
 	});
@@ -97,34 +95,17 @@ describe('Check 3 kinds of Sorting: Intl, Static and Fallback', () => {
 	 */
 	test('Sorting with default', () => {
 
-		const x = new Sorting();
+		const a = [
+			{"a": 'dez'},
+			{"a": 'quatro'},
+			{"a": 'dois'},
+			{"a": 'um'}
+		];
 
-		expect(x.format(1)).toBe('R$1,00');
+		Sorting.orderBy(a, 'a', 'pt-BR');
+
+		expect(a.map(x => x.a).join('')).toBe('dezdoisquatroum');
 
 	});
-
-	/**
-	 * 
-	 */
-	test('Sorting with static', () => {
-
-		Intl = null;
-
-		const x = new Sorting();
-
-		expect(x.format(1)).toBe('R$1,00');
-
-	}); 
-
-	/**
-	 * 
-	 */
-	test('Sorting with fallback', () => {
-
-		const x = new Sorting('fr-FR', 'EUR');
-
-		expect(x.format(1)).toBe('$1.00');
-
-	}); 
 	
 });  

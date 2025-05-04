@@ -26,8 +26,11 @@ const FEL = {
 /**
  * Parsers
  */ 
-const parserA = /at(\s+)?(.*)(\s+)?\(((.*)\:(\d+)\:(\d+))\)/;
-const parserB = /at(\s+)?((.*)\:(\d+)\:(\d+))/;
+//const parserA = /at(\s+)?(.*)(\s+)?\(((.*)\:(\d+)\:(\d+))\)/;
+//const parserB = /at(\s+)?((.*)\:(\d+)\:(\d+))/;
+
+const parserC = /at\s.*?\s\(([^:]+):(\d+):(\d+)\)/;
+const parserD = /([^:]+):(\d+):(\d+)/;
 
 /**
  * 
@@ -72,6 +75,62 @@ class Exception extends Error {
 
 	/**
 	 * 
+	 * @param {*} stack 
+	 * @returns 
+	 */
+	_parseStack (stack) {
+		
+		if ((!stack) || (typeof stack !== 'string')) {
+			
+			return null;
+
+		}
+
+		let filename = module.parent.main ? path.basename(module.parent.main.filename) : path.basename(module.parent.filename);
+	
+		const lines = stack.split('\n').slice(1);
+	
+		for (const line of lines) {
+
+			const match = line.match(parserC) || line.match(parserD);
+
+			if (match) {
+
+				const [, filepath, line, column] = match;
+			
+				try {
+
+					return {
+						main: filename,
+						path: path.dirname(filepath),
+						file: path.basename(filepath),
+						line: parseInt(line, 10),
+						column: parseInt(column, 10)
+					};
+
+
+				} catch (e) {
+
+					continue;
+		
+				}
+		
+			}
+		
+		}
+
+		return {
+			main: filename,
+			path: null,
+			file: null,
+			line: null,
+			column: null
+		};
+
+	};
+
+	/**
+	 * 
 	 */ 
 	_getSource () {
 
@@ -85,39 +144,7 @@ class Exception extends Error {
 
 		return stacks.map((s) => {
 
-			let filename = module.parent.main ? path.basename(module.parent.main.filename) : path.basename(module.parent.filename);
-
-			const line = s.split('\n')[1];
-
-			let matches = line.match(parserA);
-
-			if (!matches) {
-
-				matches = line.match(parserB);
-
-				if (!matches) {
-
-					return {
-						main: filename,
-						path: null,
-						file: null,
-						line: null,
-						column: null
-					};
-
-				}
-
-			}
-
-			const fullpath = matches[matches.length - 3];
-
-			return {
-				main: filename,
-				path: path.dirname(fullpath),
-				file: path.basename(fullpath),
-				line: matches[matches.length - 2],
-				column: matches[matches.length - 1]
-			};
+			return this._parseStack(s);	
 
 		});		
 
@@ -163,7 +190,7 @@ class Exception extends Error {
 
 			return f.file;
 
-		}).join(',');
+		}).join(', ');
 
 		return `${this.date} ${this.level}[${this.status}] :: id=${this.id} message=${this.message.replace(needle, '')} files=${files}`;
 

@@ -3,6 +3,13 @@
   "version": "2.0.0",
   "description": "A package assembling all fragments of Javascript code that I wrote that are usefull alongside many projects like Errors, Tokens, Prototypes and so on",
   "main": "index.js",
+  "type": "commonjs",
+  "exports": {
+	".": {
+		"import": "./index.mjs",
+		"require": "./index.js"
+	}
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -26,6 +33,11 @@
   "engines": {
     "node": ">=14.0.0"
   },
+  "files": [
+	"index.js",
+	"index.mjs",
+	"src"
+  ],
   "dependencies": {
     "@google-cloud/bigquery": "^8.0.0",
     "axios": "^1.9.0",
